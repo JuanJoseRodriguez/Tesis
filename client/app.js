@@ -1,78 +1,76 @@
-// A $( document ).ready() block.
-//$( document ).ready(function() {
-//    console.log( "ready!" );
-//});
-
 angular.module('app', [])
 	.controller('myController', function($scope, $http){
-		console.log("$http",$http);
-		//Levanta los datos cuando se refresca la pagina
+		//get all files when page is refreshed
 		var refresh = function(){
-		$http.get('http://172.24.17.97:3000/api/artists')
+		$http.get('http://192.168.1.10:3000/api/files')
 			.then(function(response) {
-				console.log("hola, todo ok", response);
-				$scope.artistas = response.data;
-				$scope.artista = ({});
+				console.log("GET files ok", response);
+				$scope.files = response.data;
+				$scope.file = ({});
 			}, function errorCallback(response) {
-				console.log("hola, todo mal!!", response);
+				console.log("GET files error", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
 		};
 		refresh();
-		//Agrega un nuevo artista.
-		$scope.addArtista = function () {
-			console.log($scope.artista);
-			$http.post('http://172.24.17.97:3000/api/artists',$scope.artista)
+
+		//Delete file from DB
+		$scope.delete = function(id){
+			$http.delete('http://192.168.1.10:3000/api/files/' + id)
 			.then(function(response) {
 				refresh();
-				console.log("Hola, todo ok con el post", response);
+				console.log("Delete ok", response);
 			}, function errorCallback(response) {
-				console.log("Hola, todo mal con el post!!", response);
+				console.log("Delete not ok", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
 		}
 
-		$scope.remove = function(id){
-			console.log("Hola, soy el remove: ", id);
-			$http.delete('http://172.24.17.97:3000/api/artists/' + id)
+		//Download file from server
+		$scope.download = function(id){
+			$http.get('http://192.168.1.10:3000/api/files/' + id)
 			.then(function(response) {
-				refresh();
-				console.log("Hola, todo ok con el delete", response);
+
+			/*	var a = document.createElement('a');
+        var blob = new Blob([response.data], {'type':"text/javascript"});
+				console.log("Archivo convertido: ", blob);
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'asd.js';
+        a.click();*/
+
+				console.log("Download ok HEADERS: ", response);
 			}, function errorCallback(response) {
-				console.log("Hola, todo mal con el delete!!", response);
-				// called asynchronously if an error occurs
-				// or server returns response with an error status.
-			});
-		}
-		$scope.edit = function(id){
-			console.log("Hola, soy el edit: ", id);
-			$http.get('http://172.24.17.97:3000/api/artists/' + id)
-			.then(function(response) {
-				$scope.artista = response.data[0];
-				console.log("Hola, todo ok con el edit: ", response.data[0]);
-			}, function errorCallback(response) {
-				console.log("Hola, todo mal con el edit!!", response);
+				console.log("Download error", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
 		}
 
-		$scope.update = function(){
-			console.log("Hola, soy el UPDATE: ", $scope.artista);
-			$http.put('http://172.24.17.97:3000/api/artists/' + $scope.artista._id, $scope.artista)
+		//Upload a file/files to server
+		$scope.upload = function () {
+			var f = document.getElementById('file').files[0];
+			//var f = document.getElementById('file');
+			$scope.fd=new FormData();
+			//var fd=new FormData();
+			$scope.fd.append('file',f);
+
+			/*f.files.forEach(function(file){
+				fd.append('file',f);
+	    });*/
+
+			$http.post('http://192.168.1.10:3000/api/files',$scope.fd,{
+               transformRequest: angular.identity,
+               headers: {'Content-Type': undefined}
+            })
 			.then(function(response) {
 				refresh();
-				console.log("Hola, todo ok con el put", response);
+				console.log("POST Upload ok", response);
 			}, function errorCallback(response) {
-				refresh();
-				console.log("Hola, todo mal con el put!!", response);
+				console.log("POST Upload not ok", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
-		}
-		$scope.deselect = function(){
-			$scope.artista = ({});
 		}
 		});

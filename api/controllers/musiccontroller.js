@@ -13,15 +13,12 @@ exports.findAll = function(req, res) {  //redefino -el metodo FIND que antes sol
 //GET - Return an artist with specified name
 exports.findById = function(req, res) {
     modelo.find({"_id":req.params.id}, function(err, artistas) {
-    if(err) return res.send(500, err.message);
+        if(err) return res.send(500, err.message);
 
-    console.log('GET /artistas/' + req.params.id);
+        console.log('GET /artistas/' + req.params.id);
         res.status(200).jsonp(artistas);
     });
 };
-
-
-
 
 //POST - Insert a new artist in the DB
 exports.add = function(req, res) {

@@ -7,7 +7,8 @@ var express = require("express"),
     app = express();
     bodyParser  = require("body-parser"),
     methodOverride = require("method-override");
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    formidable = require('formidable');
 
 // Connection to DB
 mongoose.connect('mongodb://localhost/test', function(err, res) {
@@ -28,28 +29,30 @@ app.use(function (req, res, next) {
   	next();
 });
 
-var models = require ('./models/musicmodel')//(app,mongoose);
-var MusicCtrl = require('./controllers/musiccontroller.js');
+var models = require ('./models/filemodel')
+var fileCtrl = require('./controllers/filecontroller.js')
 
 var router = express.Router();
 // Index - Route
  router.get('/', function(req, res) {
-   res.send("Bienvenido al sistema de Musica y Artistas! - juajua!!!");
+   res.send("Bienvenido.");
  });
+
 app.use(express.static(__dirname + "/public"));
 
 app.use('/index',router);
+
 // API routes
 var api = express.Router();
 
-api.route('/artists')
- .get(MusicCtrl.findAll)
- .post(MusicCtrl.add);
+api.route('/files')
+.get(fileCtrl.findAll)
+.post(fileCtrl.uploadFile);
 
-api.route('/artists/:id')
- .get(MusicCtrl.findById)
- .put(MusicCtrl.update)
- .delete(MusicCtrl.delete);
+api.route('/files/:id')
+.get(fileCtrl.download)
+.delete(fileCtrl.delete);
+
 
 app.use('/api', api);
 

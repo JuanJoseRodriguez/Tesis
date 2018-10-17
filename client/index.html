@@ -9,40 +9,38 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
     <script src="app.js"></script>
-    <title>Catalogo de Musica</title>
+    <title>File Server</title>
   </head>
   <body ng-controller="myController">
     <div>
-      <h1>Catalogo de musica</h1>
+      <h1>Files uploaded</h1>
 
       <table class="table">
       	<thead>
       		<tr>
-      			<th>Grupo</th>
-      			<th>Origen</th>
-            <th>Año</th>
-            <th>Acción</th>
+      			<th>Name</th>
+      			<th>Path</th>
+            <th>Uses</th>
+            <th>Actions</th>
             <th>&nbsp;</th>
       		</tr>
       	</thead>
       	<tbody>
-          <tr>
-            <td><input class="form-control" ng-model=artista.grupo></td>
-            <td><input class="form-control" ng-model=artista.origen></td>
-            <td><input class="form-control" ng-model=artista.ano></td>
-            <td><button class="btn btn-primary" ng-click=addArtista()>Agregar Artista</button></td>
-            <td><button class="btn btn-info" ng-click="update()">Actualizar</button>&nbsp;&nbsp;
-            <button class="btn btn-info" ng-click="deselect()">Limpiar</button></td>
-          </tr>
-      		<tr ng-repeat="artista in artistas">
-      			<td>{{artista.grupo}}</td>
-      			<td>{{artista.origen}}</td>
-            <td>{{artista.ano}}</td>
-            <td><button class="btn btn-denger" ng-click="remove(artista._id)">Borrar</button></td>
-            <td><button class="btn btn-warning" ng-click="edit(artista._id)">Editar</button></td>
+      		<tr ng-repeat="file in files">
+      			<td>{{file.name}}</td>
+      			<td>{{file.path}}</td>
+            <td>{{file.uses}}</td>
+            <td><button class="btn btn-denger" ng-click="delete(file._id)">Delete</button></td>
+            <td><button class="btn btn-warning" ng-click="download(file._id)">Download</button></td>
           </tr>
       	</tbody>
       </table>
+    </div>
+    <div>
+      <form enctype="multipart/form-data" >
+          <input type="file" id="file" name="upload" multiple >
+          <input type="submit" value="Upload" ng-click="upload()">
+      </form>
     </div>
   </body>
 </html>
