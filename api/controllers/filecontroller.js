@@ -54,14 +54,11 @@ exports.uploadFile =  function (req, res){
         console.log('dentro del find')
         var filename = files[0].name;
         var fileLocation = files[0].fullpath;
-        res.filename = filename
-        res.filetype = 'text/javascript'
-        res.download(fileLocation,filename,function(){
-          res.file = filename
-          console.log("file  ", res.file)
-        })
-
-        console.log("filename ", res.filename)
+        /*res.filename = filename
+        res.filetype = 'text/javascript'*/
+        res.download(fileLocation,filename)
+        res.data.file.send(jsonp(files[0]))
+        console.log("filename ", res)
       });
   }
 

@@ -41,12 +41,7 @@ angular.module('app', [])
         a.click();*/
 
 				console.log("Response download ", response)
-				console.log("Download res.filename: ", response.filename);
-				console.log("Download res.file: ", response.file);
-				console.log("Download res.body: ", response.body);
-				console.log("Download header: ", response.header);
-				console.log("Download data: ", response.data);
-				
+
 			}, function errorCallback(response) {
 				console.log("Download error", response);
 				// called asynchronously if an error occurs
