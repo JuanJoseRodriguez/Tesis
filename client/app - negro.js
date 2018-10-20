@@ -2,9 +2,8 @@ angular.module('app', [])
 	.controller('myController', function($scope, $http){
 		//get all files when page is refreshed
 		var refresh = function(){
-		$http.get('http://192.168.1.10:3000/api/files')
+		$http.get('http://192.168.0.110:3000/api/files')
 			.then(function(response) {
-				console.log("GET files ok", response);
 				$scope.files = response.data;
 				$scope.file = ({});
 			}, function errorCallback(response) {
@@ -17,10 +16,9 @@ angular.module('app', [])
 
 		//Delete file from DB
 		$scope.delete = function(id){
-			$http.delete('http://192.168.1.10:3000/api/files/' + id)
+			$http.delete('http://192.168.0.110:3000/api/files/' + id)
 			.then(function(response) {
 				refresh();
-				console.log("Delete ok", response);
 			}, function errorCallback(response) {
 				console.log("Delete not ok", response);
 				// called asynchronously if an error occurs
@@ -30,7 +28,7 @@ angular.module('app', [])
 
 		//Download file from server
 		$scope.download = function(id){
-			$http.get('http://192.168.1.10:3000/api/files/' + id)
+			$http.get('http://192.168.0.110:3000/api/files/' + id)
 			.then(function(response) {
 
 			/*	var a = document.createElement('a');
@@ -40,13 +38,7 @@ angular.module('app', [])
         a.download = 'asd.js';
         a.click();*/
 
-				console.log("Response download ", response)
-				console.log("Download res.filename: ", response.filename);
-				console.log("Download res.file: ", response.file);
-				console.log("Download res.body: ", response.body);
-				console.log("Download header: ", response.header);
-				console.log("Download data: ", response.data);
-				
+				console.log("Download ok HEADERS: ", response);
 			}, function errorCallback(response) {
 				console.log("Download error", response);
 				// called asynchronously if an error occurs
@@ -66,7 +58,7 @@ angular.module('app', [])
 				fd.append('file',f);
 	    });*/
 
-			$http.post('http://192.168.1.10:3000/api/files',$scope.fd,{
+			$http.post('http://192.168.0.110:3000/api/files',$scope.fd,{
                transformRequest: angular.identity,
                headers: {'Content-Type': undefined}
             })
@@ -79,4 +71,4 @@ angular.module('app', [])
 				// or server returns response with an error status.
 			});
 		}
-		});
+	});

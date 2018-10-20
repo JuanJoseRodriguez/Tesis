@@ -52,14 +52,16 @@ exports.uploadFile =  function (req, res){
         if(err) return res.send(500, err.message);
 
         console.log('dentro del find')
-        console.log(files)
         var filename = files[0].name;
         var fileLocation = files[0].fullpath;
-        res.header({
-           'Content-Type': 'text/javascript',
-           'name': filename
+        res.filename = filename
+        res.filetype = 'text/javascript'
+        res.download(fileLocation,filename,function(){
+          res.file = filename
+          console.log("file  ", res.file)
         })
-        res.download(fileLocation,filename);
+
+        console.log("filename ", res.filename)
       });
   }
 
