@@ -8,9 +8,10 @@ var express = require("express"),
     bodyParser  = require("body-parser"),
     methodOverride = require("method-override");
     mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 
 // Connection to DB
-mongoose.connect('mongodb://localhost/test', function(err, res) {
+mongoose.connect('mongodb://localhost/new_usr', function(err, res) {
  if(err) throw err;
  console.log('Connected to Database');
 });
@@ -23,13 +24,13 @@ app.use(methodOverride());
 app.use(function (req, res, next) {
 	//Se habilita CORS para que el cliente pueda consumir los end-points.
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-  	res.header("Access-Control-Allow-Origin", "*");
-  	res.header("Access-Control-Allow-Headers", "X-Requested-With,  Content-Type, Accept");
-  	next();
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With,  Content-Type, Accept");
+  next();
 });
-
-var models = require ('./models/musicmodel')//(app,mongoose);
-var MusicCtrl = require('./controllers/musiccontroller.js');
+var models = require ('./models/fileModel.js');//(app,mongoose);
+//var MusicCtrl = require('./controllers/musiccontroller.js');
+var FilesCtrl = require('./controllers/fileController.js');
 
 var router = express.Router();
 // Index - Route
@@ -39,19 +40,29 @@ var router = express.Router();
 app.use(express.static(__dirname + "/public"));
 
 app.use('/index',router);
+
+app.use(fileUpload());
+//app.post('/upload',(req,res) => {
+  //  let EDFile = req.files.file
+    //EDFile.mv(`./file-upload-demo/${EDFile.name}`,err => {
+      //  if(err) return res.status(500).send({ message : err })
+
+        //return res.status(200).send({ message : 'File upload' })
+    //})
+//})
 // API routes
 var api = express.Router();
-
-api.route('/artists')
- .get(MusicCtrl.findAll)
- .post(MusicCtrl.add);
-
-api.route('/artists/:id')
- .get(MusicCtrl.findById)
- .put(MusicCtrl.update)
- .delete(MusicCtrl.delete);
-
 app.use('/api', api);
+
+api.route('/upload')
+ .get(FilesCtrl.findAll)
+ .post(FilesCtrl.add);
+
+
+api.route('/upload/:id')
+ .get(FilesCtrl.findById)
+ .put(FilesCtrl.update)
+ .delete(FilesCtrl.delete);
 
 // Start server
 app.listen(3000, function() {

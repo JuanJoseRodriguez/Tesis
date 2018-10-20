@@ -9,40 +9,38 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
     <script src="app.js"></script>
-    <title>Catalogo de Musica</title>
+    <title>Servidor de archivos</title>
   </head>
-  <body ng-controller="myController">
-    <div>
-      <h1>Catalogo de musica</h1>
 
+  <body ng-controller="myController">
+
+    <div>
+      <h1>Servidor de archivos</h1>
+      <div class="form-group">
+          <input name="file" type="file" id="inputFileServer" class="form-control"  />
+          <button type="submit"  ng-click=addFile()>Agregar Archivo</button> <!-- class="btn btn-primary"-->
+      </div>
       <table class="table">
       	<thead>
       		<tr>
-      			<th>Grupo</th>
-      			<th>Origen</th>
-            <th>Año</th>
+      			<th>ID</th>
+      			<th>Archivo</th>
+            <th>Contador</th>
             <th>Acción</th>
             <th>&nbsp;</th>
       		</tr>
       	</thead>
       	<tbody>
-          <tr>
-            <td><input class="form-control" ng-model=artista.grupo></td>
-            <td><input class="form-control" ng-model=artista.origen></td>
-            <td><input class="form-control" ng-model=artista.ano></td>
-            <td><button class="btn btn-primary" ng-click=addArtista()>Agregar Artista</button></td>
-            <td><button class="btn btn-info" ng-click="update()">Actualizar</button>&nbsp;&nbsp;
-            <button class="btn btn-info" ng-click="deselect()">Limpiar</button></td>
-          </tr>
-      		<tr ng-repeat="artista in artistas">
-      			<td>{{artista.grupo}}</td>
-      			<td>{{artista.origen}}</td>
-            <td>{{artista.ano}}</td>
-            <td><button class="btn btn-denger" ng-click="remove(artista._id)">Borrar</button></td>
-            <td><button class="btn btn-warning" ng-click="edit(artista._id)">Editar</button></td>
+      	  <tr ng-repeat="file in files">
+      			<td>{{file._id}}</td>
+      			<td>{{file.name}}</td>
+            <td>{{file.cont}}</td>
+            <td><button class="btn btn-warning" ng-click="download(file._id)">Descargar</button></td>
+            <td><button class="btn btn-denger" ng-click="remove(file._id)">Borrar</button></td>
           </tr>
       	</tbody>
       </table>
     </div>
   </body>
+
 </html>
