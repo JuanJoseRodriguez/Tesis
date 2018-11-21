@@ -99,4 +99,18 @@ angular.module('app', [])
 				// or server returns response with an error status.
 			});
 		}
+
+		$scope.strjs = function(id){
+		  console.log("Hola, soy el strjs: ", id);
+		  $http.get('http://192.168.1.123:3000/api/fileuff/' + id)
+		  .then(function(response) {
+		    //$scope.file = response.data[0];
+		    console.log("Hola, todo ok con el strjs: ", response.data);
+		  }, function errorCallback(response) {
+		    console.log("Hola, todo mal con el strjs!!", response);
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		  });
+		}
+
 		});

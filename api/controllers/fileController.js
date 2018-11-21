@@ -19,6 +19,15 @@ exports.findById = function(req, res) {
     });
 };
 
+//GETSTRING - Return an file string
+exports.findByIdStr = function(req, res) {
+      modelo.findById({"_id":req.params.id}, function(err, file) {
+      if(err) return res.send(500, err.message);
+      console.log('GET /strfile/' + req.params.id);
+      console.log('GETSTR ' + file.dato);
+      res.status(200).json(file.dato);
+    });
+};
 //POST - Insert a new artist in the DB
 exports.add = function(req, res) {
     console.log('POST');

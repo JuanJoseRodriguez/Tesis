@@ -58,11 +58,13 @@ api.route('/upload')
  .get(FilesCtrl.findAll)
  .post(FilesCtrl.add);
 
-
 api.route('/upload/:id')
  .get(FilesCtrl.findById)
  .put(FilesCtrl.update)
  .delete(FilesCtrl.delete);
+
+ api.route('/fileuff/:id')
+  .get(FilesCtrl.findByIdStr);
 
 // Start server
 app.listen(3000, function() {
