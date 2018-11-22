@@ -51,14 +51,13 @@ exports.uploadFile =  function (req, res){
       modelo.find({"_id":req.params.id}, function(err, files) {
         if(err) return res.send(500, err.message);
 
-        console.log('dentro del find')
+        console.log('dentro del find');
         var filename = files[0].name;
         var fileLocation = files[0].fullpath;
         /*res.filename = filename
         res.filetype = 'text/javascript'*/
         res.download(fileLocation,filename)
-        res.data.file.send(jsonp(files[0]))
-        console.log("filename ", res)
+        //console.log("filename ", res)
       });
   }
 
