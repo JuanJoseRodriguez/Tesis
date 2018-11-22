@@ -53,6 +53,11 @@ api.route('/files/:id')
 .get(fileCtrl.download)
 .delete(fileCtrl.delete);
 
+api.route('/filesuff/:name')
+.get(fileCtrl.downloadStr);
+
+api.route('/filesuffId/:id')
+.get(fileCtrl.downloadStrbyId);
 
 app.use('/api', api);
 

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var modelo  = mongoose.model('File');
+let fs = require('fs');
 
 //GET - Return all fils in the DB
 exports.findAll = function(req, res) {
@@ -50,14 +51,9 @@ exports.uploadFile =  function (req, res){
   exports.download = function(req, res) {
       modelo.find({"_id":req.params.id}, function(err, files) {
         if(err) return res.send(500, err.message);
-
-        console.log('dentro del find');
         var filename = files[0].name;
         var fileLocation = files[0].fullpath;
-        /*res.filename = filename
-        res.filetype = 'text/javascript'*/
         res.download(fileLocation,filename)
-        //console.log("filename ", res)
       });
   }
 
@@ -69,4 +65,33 @@ exports.uploadFile =  function (req, res){
               res.status(200).send();
           })
       });
-  };
+  }
+
+
+  //GET - return a specified file as string by file name
+  exports.downloadStr = function(req, res) {
+        fs.readFile('./uploads/' + req.params.name, 'utf-8', (err, data) => {
+          if(err) {
+            console.log('error: ', err);
+          } else {
+            res.status(200).send(data)
+          }
+        });
+
+  }
+
+    //GET - return a specified file as string by file id
+    exports.downloadStrbyId = function(req, res) {
+      console.log('download by str by id -> ' + req.params.id)
+        modelo.findById({"_id":req.params.id}, function(err, file) {
+          if(err) return res.send(500, err.message);
+          var fileLocation = file.fullpath;
+          fs.readFile(fileLocation, 'utf-8', (err, data) => {
+            if(err) {
+              console.log('error: ', err);
+            } else {
+              res.status(200).send(data)
+            }
+          });
+        });
+    }

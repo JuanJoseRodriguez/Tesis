@@ -33,15 +33,11 @@ angular.module('app', [])
 			$http.get('http://192.168.1.10:3000/api/files/' + id)
 			.then(function(response) {
 
-			/*	var a = document.createElement('a');
-        var blob = new Blob([response.data], {'type':"text/javascript"});
-				console.log("Archivo convertido: ", blob);
-        a.href = window.URL.createObjectURL(blob);
-        a.download = 'asd.js';
-        a.click();*/
 
-				console.log("Download ok HEADERS: ", response);
-			}, function errorCallback(response) {
+			console.log("Download dir http://192.168.1.10:3000/api/files/" + id);
+			console.log(response)
+
+		}, function errorCallback(response) {
 				console.log("Download error", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.

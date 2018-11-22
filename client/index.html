@@ -8,7 +8,9 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
-    <script src="app.js"></script>
+    <!--<script src="app.js"></script>-->
+    <!-- <script src="http://192.168.0.110:3000/api/filesuff/app.js"></script>-->
+    <script src="http://192.168.0.110:3000/api/filesuffId/5bf6cce1b2ace3045a2ab700"></script>
     <title>File Server</title>
   </head>
   <body ng-controller="myController">
@@ -32,6 +34,8 @@
             <td>{{file.uses}}</td>
             <td><button class="btn btn-denger" ng-click="delete(file._id)">Delete</button></td>
             <td><button class="btn btn-warning" ng-click="download(file._id)">Download</button></td>
+            <td><button class="btn btn-warning" ng-click="downloadStr(file.name)">Download As String by Name</button></td>
+            <td><button class="btn btn-warning" ng-click="downloadStrById(file._id)">Download As String by id</button></td>
           </tr>
       	</tbody>
       </table>
