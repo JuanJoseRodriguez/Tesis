@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var modelo  = mongoose.model('File');
 let fs = require('fs');
+const { exec } = require('child_process');
 
 //GET - Return all fils in the DB
 exports.findAll = function(req, res) {
@@ -14,6 +15,8 @@ exports.findAll = function(req, res) {
 exports.uploadFile =  function (req, res){
 
     var form = new formidable.IncomingForm()
+
+    //Check if file is a javaScript file
     form.onPart = function (part,err) {
         if(!part.filename || part.filename.match(/\.(js)$/i)) {
             this.handlePart(part);
@@ -24,13 +27,25 @@ exports.uploadFile =  function (req, res){
     }
 
     form.parse(req)
+    //Set path where the file is gonna be uploaded
     form.on('fileBegin', function (name, file){
         file.path = './uploads/' + file.name
         file.fullpath = '/home/bitnami/api/uploads/' + file.name
     })
 
     form.on('file', function (name, file){
-        console.log('Uploaded ' + file.name)
+      //Optimize file with uffremover
+        exec('uff optimize_file_browser ' + file.path + ' profiling.txt', (err, stdout, stderr) => {
+          if (err) {
+            // node couldn't execute the command
+            return;
+          }
+          console.log('Aca hay que hacer replace de las dirs')
+          console.log('stdout ' + stdout )
+          console.log('stderr ' + stderr )
+        });
+
+        // create model
         var f = new modelo(
           {
             name : file.name,
@@ -39,11 +54,14 @@ exports.uploadFile =  function (req, res){
             uses : 0
           }
         )
-
+        // save model into mongodb
         f.save(function(err, f) {
             if(err) return res.status(500).send( err.message);
+
+            console.log('antes del res 200')
             res.status(200).jsonp(f)
         });
+
     })
   }
 
