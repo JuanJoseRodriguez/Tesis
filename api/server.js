@@ -8,6 +8,7 @@ var express = require("express"),
     bodyParser  = require("body-parser"),
     methodOverride = require("method-override");
     mongoose = require('mongoose');
+    formidable = require('formidable');
 const fileUpload = require('express-fileupload');
 
 // Connection to DB
@@ -65,6 +66,9 @@ api.route('/upload/:id')
 
  api.route('/fileuff/:id')
   .get(FilesCtrl.findByIdStr);
+
+api.route('/fileuff')
+  .post(FilesCtrl.uffoptimizer);
 
 // Start server
 app.listen(3000, function() {

@@ -2,10 +2,11 @@
 angular.module('app', [])
 	.controller('myController', function($scope, $http){
 		console.log("$http",$http);
-
+		var ipup = "http://192.168.1.123:3000/api/upload/";
+		var ipfi = "http://192.168.1.123:3000/api/fileuff/";
 		//Levanta los datos cuando se refresca la pagina
 		var refresh = function(){
-		$http.get('http://192.168.1.123:3000/api/upload')
+		$http.get(ipup)
 			.then(function(response) {
 				console.log("hola, todo ok", response);
 				$scope.files = response.data;
@@ -24,7 +25,7 @@ angular.module('app', [])
 			$scope.fd = new FormData();
 			console.log(file);
 	    $scope.fd.append("file", file);
-			$http.post('http://192.168.1.123:3000/api/upload',$scope.fd, { transformRequest: angular.identity,
+			$http.post(ipup,$scope.fd, { transformRequest: angular.identity,
                headers: {'Content-Type': undefined}  } )
 			.then(function(response) {
 				refresh();
@@ -38,7 +39,7 @@ angular.module('app', [])
 
 		$scope.remove = function(id){
 			console.log("Hola, soy el remove: ", id);
-			$http.delete('http://192.168.1.123:3000/api/upload/' + id)
+			$http.delete(ipup + id)
 			.then(function(response) {
 				refresh();
 				console.log("Hola, todo ok con el delete", response);
@@ -50,7 +51,7 @@ angular.module('app', [])
 		}
 		$scope.edit = function(id){
 			console.log("Hola, soy el edit: ", id);
-			$http.get('http://192.168.1.123:3000/api/upload/' + id)
+			$http.get(ipup + id)
 			.then(function(response) {
 				$scope.artista = response.data[0];
 				console.log("Hola, todo ok con el edit: ", response.data[0]);
@@ -63,7 +64,7 @@ angular.module('app', [])
 
 		$scope.update = function(){
 			console.log("Hola, soy el UPDATE: ", $scope.file);
-			$http.put('http://192.168.1.123:3000/api/upload/' + $scope.file._id, $scope.file)
+			$http.put(ipup + $scope.file._id, $scope.file)
 			.then(function(response) {
 				refresh();
 				console.log("Hola, todo ok con el put", response);
@@ -80,7 +81,7 @@ angular.module('app', [])
 
 		$scope.download = function(id){
 			console.log("Hola, soy el Descargar: ", id);
-			$http.get('http://192.168.1.123:3000/api/upload/' + id)
+			$http.get(ipup + id)
 			.then(function(response) {
 				$scope.file = response.data[0];
 				console.log("Hola, todo ok con el descargar: ", response.data[0]);
@@ -102,7 +103,7 @@ angular.module('app', [])
 
 		$scope.strjs = function(id){
 		  console.log("Hola, soy el strjs: ", id);
-		  $http.get('http://192.168.1.123:3000/api/fileuff/' + id)
+		  $http.get(ipfi + id)
 		  .then(function(response) {
 		    //$scope.file = response.data[0];
 		    console.log("Hola, todo ok con el strjs: ", response.data);
@@ -111,6 +112,24 @@ angular.module('app', [])
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
 		  });
+		}
+
+		$scope.uffop = function () {
+			console.log("llama al uffoptimizer");
+			var file = document.getElementById('inputUffOptimizer').files[0];
+			$scope.fd = new FormData();
+			console.log(file);
+	    $scope.fd.append("file", file);
+			$http.post(ipfi,$scope.fd, { transformRequest: angular.identity,
+               headers: {'Content-Type': undefined}  } )
+			.then(function(response) {
+				refresh();
+				console.log("Hola, todo ok con el uffoptimizer", response);
+			}, function errorCallback(response) {
+				console.log("Hola, todo mal con el uffoptimizer!!", response);
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
 		}
 
 		});

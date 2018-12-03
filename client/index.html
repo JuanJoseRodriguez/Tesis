@@ -7,7 +7,7 @@
 <!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script type="text/javascript" src="http://192.168.1.123:3000/api/fileuff/5bf5d7d0b7af45049fdbc11e"></script>
+    <script type="text/javascript" src="app.js"></script>
     <title>Servidor de archivos</title>
   </head>
 
@@ -18,6 +18,10 @@
       <div class="form-group">
           <input name="file" type="file" id="inputFileServer" class="form-control"  />
           <button type="submit"  ng-click=addFile()>Agregar Archivo</button> <!-- class="btn btn-primary"-->
+      </div>
+      <div class="form-group">
+          <input name="file" type="file" id="inputUffOptimizer" class="form-control"  />
+          <button type="submit"  ng-click=uffop()>Agregar Archivo</button> <!-- class="btn btn-primary"-->
       </div>
       <table class="table">
       	<thead>
