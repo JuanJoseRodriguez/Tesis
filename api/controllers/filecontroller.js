@@ -37,8 +37,8 @@ exports.uploadFile =  function (req, res){
 
     form.on('file', function (name, file){
       //Optimize file with uffremover
-        console.log('sudo sh uffscript.sh ' + file.name);
-        exec('sudo sh uffscript.sh ' + file.name, (err, stdout, stderr) => {
+        console.log('sudo sh uffscript.sh ' + file.path);
+        exec('sudo sh uffscript.sh ' + file.path, (err, stdout, stderr) => {
           if (err) {
             // node couldn't execute the command
             return;
