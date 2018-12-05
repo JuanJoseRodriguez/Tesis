@@ -31,11 +31,14 @@ exports.uploadFile =  function (req, res){
     form.on('fileBegin', function (name, file){
         file.path = './uploads/' + file.name
         file.fullpath = '/home/bitnami/api/uploads/' + file.name
+        //file.path = './' + file.name
+        //file.fullpath = '/home/bitnami/api/' + file.name
     })
 
     form.on('file', function (name, file){
       //Optimize file with uffremover
-        exec('uff optimize_file_browser ' + file.path + ' profiling.txt', (err, stdout, stderr) => {
+        console.log('sudo sh uffscript.sh ' + file.name);
+        exec('sudo sh uffscript.sh ' + file.name, (err, stdout, stderr) => {
           if (err) {
             // node couldn't execute the command
             return;
