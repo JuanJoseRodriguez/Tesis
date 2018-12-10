@@ -30,7 +30,7 @@ exports.uploadFile =  function (req, res){
     //Set path where the file is gonna be uploaded
     form.on('fileBegin', function (name, file){
         file.path = './uploads/' + file.name
-        file.fullpath = '/home/bitnami/api/uploads/' + file.name
+        file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name
         //file.path = './' + file.name
         //file.fullpath = '/home/bitnami/api/' + file.name
     })

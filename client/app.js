@@ -2,7 +2,7 @@ angular.module('app', [])
 	.controller('myController', function($scope, $http){
 
 		var ipNegro = 'http://192.168.0.110:3000'
-		var ipBuitre = 'http://192.168.1.10:3000'
+		var ipBuitre = 'http://18.188.249.225:3000'//'http://192.168.1.123:3000'
 		//get all files when page is refreshed
 		var refresh = function(){
 		$http.get(ipBuitre + '/api/files')
