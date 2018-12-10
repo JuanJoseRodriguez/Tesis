@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var modelo  = mongoose.model('File');
+var modelo  = mongoose.model('uffremoverModel');
 let fs = require('fs');
 const { exec } = require('child_process');
 
@@ -51,9 +51,11 @@ exports.uploadFile =  function (req, res){
         // create model
         var f = new modelo(
           {
+            //fatherid: Schema.Types.ObjectId, //Solo se completa si es un archivo hijo.
             name : file.name,
             path : file.path,
             fullpath : file.fullpath,
+            //data: String,
             uses : 0
           }
         )
