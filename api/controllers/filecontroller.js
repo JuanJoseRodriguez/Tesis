@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var modelo  = mongoose.model('uffremoverModel');
+var serialize = require('node-serialize');
+
 let fs = require('fs');
 const { exec } = require('child_process');
 
@@ -48,14 +50,17 @@ exports.uploadFile =  function (req, res){
           console.log('stderr ' + stderr )
         });
 
+        var uns = fs.readFileSync(file.path);
+        console.log("Despues: ", uns);
+
         // create model
         var f = new modelo(
           {
-            //fatherid: Schema.Types.ObjectId, //Solo se completa si es un archivo hijo.
+            fatherid: null, //Solo se completa si es un archivo hijo.
             name : file.name,
             path : file.path,
             fullpath : file.fullpath,
-            //data: String,
+            data: uns,
             uses : 0
           }
         )
@@ -105,16 +110,22 @@ exports.uploadFile =  function (req, res){
 
     //GET - return a specified file as string by file id
     exports.downloadStrbyId = function(req, res) {
-      console.log('download by str by id -> ' + req.params.id)
-        modelo.findById({"_id":req.params.id}, function(err, file) {
-          if(err) return res.send(500, err.message);
-          var fileLocation = file.fullpath;
-          fs.readFile(fileLocation, 'utf-8', (err, data) => {
-            if(err) {
-              console.log('error: ', err);
-            } else {
-              res.status(200).send(data)
-            }
-          });
-        });
+      modelo.findById({"_id":req.params.id}, function(err, file) {
+        if(err) return res.send(500, err.message);
+        console.log('GET /strfile/' + req.params.id);
+        console.log('GETSTR ' + file.data);
+        res.status(200).send(file.data);
+      });
+      // console.log('download by str by id -> ' + req.params.id)
+      //   modelo.findById({"_id":req.params.id}, function(err, file) {
+      //     if(err) return res.send(500, err.message);
+      //     var fileLocation = file.fullpath;
+      //     fs.readFile(fileLocation, 'utf-8', (err, data) => {
+      //       if(err) {
+      //         console.log('error: ', err);
+      //       } else {
+      //         res.status(200).send(data)
+      //       }
+      //     });
+      //   });
     }
