@@ -39,20 +39,8 @@ exports.uploadFile =  function (req, res){
 
     form.on('file', function (name, file){
       //Optimize file with uffremover
-        console.log('sudo sh uffscript.sh ' + file.path);
-        exec('sudo sh uffscript.sh ' + file.path, (err, stdout, stderr) => {
-          if (err) {
-            // node couldn't execute the command
-            return;
-          }
-          console.log('Aca hay que hacer replace de las dirs')
-          console.log('stdout ' + stdout )
-          console.log('stderr ' + stderr )
-        });
-
+        var fatherid;
         var uns = fs.readFileSync(file.path);
-        console.log("Despues: ", uns);
-
         // create model
         var f = new modelo(
           {
@@ -67,10 +55,59 @@ exports.uploadFile =  function (req, res){
         // save model into mongodb
         f.save(function(err, f) {
             if(err) return res.status(500).send( err.message);
+            fatherid = f._id;
 
-            console.log('antes del res 200')
-            res.status(200).jsonp(f)
         });
+
+        //Init uffremover
+        exec('uff optimize_file_browser ' + file.path + ' profiling.txt ' , (err, stdout, stderr) => {
+          if (err) {
+            // node couldn't execute the command
+            console.log(err)
+            return;
+          }
+          var dataOptimized = fs.readFileSync('./uploads/app-optimized-min.js').toString();
+          var dir = './uff';
+          fs.readdir(dir, (err, files) => {
+          	files.forEach((fi) => {
+              var dat = fs.readFileSync(dir + '/' + fi);
+              var f = new modelo(
+                {
+                  fatherid: fatherid,
+                  name : fi,
+                  path : null,
+                  fullpath : null,
+                  data: dat,
+                  uses : 0
+                }
+              )
+
+              //save model into mongodb
+              f.save(function(err, f) {
+                  if(err)
+                    console.log('Error al guardar!!: ' + f);
+                  else
+                    console.log('Se guardo con exito: ', f.name);
+                    dataOptimized = dataOptimized.replace('uff/'+fi, 'http://18.222.186.18:3000/filesuffId/'+f._id);
+                    console.log('dataOptimized1: ', dataOptimized);
+              });
+          })
+          console.log('dataOptimized2: ', dataOptimized)
+          exec('sudo sh uffscript.sh' , (err, stdout, stderr) => {
+            if (err) {
+              // node couldn't execute the command
+              console.log(err)
+              return;
+            } else {
+
+            }
+        });
+        });
+          //console.log('STDOUT: ' +  stdout);
+          //console.log('STDERR: ' +  stderr);
+        });// End uffremover
+
+        res.status(200).jsonp(f)
 
     })
   }
