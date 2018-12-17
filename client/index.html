@@ -20,6 +20,7 @@
       <table class="table">
       	<thead>
       		<tr>
+            <th>ID</th>
       			<th>Name</th>
       			<th>Path</th>
             <th>Uses</th>
@@ -29,6 +30,7 @@
       	</thead>
       	<tbody>
       		<tr ng-repeat="file in files">
+            <td>{{file._id}}</td>
       			<td>{{file.name}}</td>
       			<td>{{file.path}}</td>
             <td>{{file.uses}}</td>
