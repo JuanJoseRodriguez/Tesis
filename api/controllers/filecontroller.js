@@ -32,31 +32,29 @@ exports.uploadFile =  function (req, res){ //Init of uploadFile
   form.on('fileBegin', function (name, file){
       file.path = './uploads/' + file.name
       file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name
-      //file.path = './' + file.name
-      //file.fullpath = '/home/bitnami/api/' + file.name
   })
 
   form.on('file', function (name, file){
     //Optimize file with uffremover
-      let fatherid;
-      let uns = fs.readFileSync(file.path);
-      // create model
-      let f = new modelo(
-        {
-          fatherid: null, //Solo se completa si es un archivo hijo.
-          name : file.name,
-          path : file.path,
-          fullpath : file.fullpath,
-          data: uns,
-          uses : 0
-        }
-      )
-      // save model into mongodb
-      f.save(function(err, f) {
-          if(err) return res.status(500).send( err.message);
-          fatherid = f._id;
+    let fatherid;
+    let uns = fs.readFileSync(file.path);
+    // create model
+    let f = new modelo(
+      {
+        fatherid: null, //Solo se completa si es un archivo hijo.
+        name : file.name,
+        path : file.path,
+        fullpath : file.fullpath,
+        data: uns,
+        uses : 0
+      }
+    )
+    // save model into mongodb
+    f.save(function(err, f) {
+        if(err) return res.status(500).send( err.message);
+        fatherid = f._id;
 
-      });
+    });
     exec('uff optimize_file_browser ' + file.path + ' profiling.txt ' , (err, stdout, stderr) => {//Init of command uff
       if (err) {
         // node couldn't execute the command
@@ -83,12 +81,13 @@ exports.uploadFile =  function (req, res){ //Init of uploadFile
           f.save(function(err, f) {
               if(err)
                 console.log('[Error] Error al guardar el archivo: ', f);
-              else
+              else {
                 console.log('[Info] Se guardo con exito el archivo llamado ', f.name);
                 dataOptimized = dataOptimized.replace('uff/'+fi, 'http://18.222.186.18:3000/filesuffId/'+f._id);
                 console.log('[Info] dataOptimized1: ');
-          });
-        });
+              }
+          }); //End save
+        });//End forEach
         exec('sudo sh uffscript.sh' , (err, stdout, stderr) => {
           if (err) {
             // node couldn't execute the command
@@ -98,8 +97,12 @@ exports.uploadFile =  function (req, res){ //Init of uploadFile
             console.log("[Info] El script uffscript.sh se ejecuto con éxito")
             console.log('[Info] dataOptimized2: ')
           }
+        });//End exec uffscript
+        updateFile(fatherid, dataOptimized, function(err, file){
+          if(err) return res.status(500).send(err.message);
+          res.status(200).jsonp(file);
         });
-      });
+      });//End readdir
     });// End of command uff
     res.status(200).jsonp(f)
   })
@@ -141,5 +144,35 @@ exports.downloadStrbyId = function(req, res) {
   modelo.findById({"_id":req.params.id}, function(err, file) {
     if(err) return res.send(500, err.message);
     res.status(200).send(file.data);
+  });
+}
+
+//PUT - Update a register already exists
+exports.update = function(req, res) {
+  updateFile(req.params.id, req.body.data, req.body.fatherid, req.body.name, req.body.uses, function(err, file){
+    if(err) return res.status(500).send(err.message);
+    res.status(200).jsonp(file);
+  });
+};
+
+//*******************FUNCTIONS*************************
+function updateFile(id, data, fatherid, name, uses, callback) {
+  modelo.findById({"_id":id}, function(err, file) {
+    if (fatherid != null) file.fatherid = fatherid;
+    if (name != null) file.name = name;
+    if (data != null) file.data = data;
+    if (uses != null) file.uses = uses;
+    file.save(function(err) {
+      if(err){
+        console.log("[Error] Error al modificar el archivo.");
+        return;
+        //callback(err);
+      }
+      console.log("[Info] La modificación fue exitosa.");
+      //callback(null, file);
+    });
+    if(err) return callback(err);
+
+    callback(null, file);
   });
 }

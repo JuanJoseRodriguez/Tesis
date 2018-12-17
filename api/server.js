@@ -51,6 +51,7 @@ api.route('/files')
 
 api.route('/files/:id')
 .get(fileCtrl.download)
+.put(fileCtrl.update)
 .delete(fileCtrl.delete);
 
 api.route('/filesuff/:name')
