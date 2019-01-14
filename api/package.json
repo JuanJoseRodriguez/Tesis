@@ -11,10 +11,11 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "formidable": "^1.2.1",
     "method-override": "^2.3.9",
     "mongoose": "^4.8.5",
-    "formidable": "^1.2.1",
-    "uffremover": "^1.0.0",
-    "node-serialize":"^0.0.4"
+    "node-cron": "^2.0.3",
+    "node-serialize": "^0.0.4",
+    "uffremover": "^1.0.0"
   }
 }

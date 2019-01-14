@@ -10,7 +10,7 @@
 
     <script src="app.js"></script>
     <!--<script src="http://192.168.1.123:3000/api/filesuff/app-optimized.js"></script>-->
-    <!--<script src="http://192.168.0.110:3000/api/filesuffId/5bf6cce1b2ace3045a2ab700"></script>-->
+    <!-- <script src="http://18.222.186.18:3000/api/filesuffId/5c2d458c710134282cfded95"></script> -->
     <title>File Server</title>
   </head>
   <body ng-controller="myController">
@@ -22,7 +22,7 @@
       		<tr>
             <th>ID</th>
       			<th>Name</th>
-      			<th>Path</th>
+      			<th>Father</th>
             <th>Uses</th>
             <th>Actions</th>
             <th>&nbsp;</th>
@@ -32,11 +32,11 @@
       		<tr ng-repeat="file in files">
             <td>{{file._id}}</td>
       			<td>{{file.name}}</td>
-      			<td>{{file.path}}</td>
+      			<td>{{file.fatherId}}</td>
             <td>{{file.uses}}</td>
             <td><button class="btn btn-denger" ng-click="delete(file._id)">Delete</button></td>
-            <td><button class="btn btn-warning" ng-click="download(file._id)">Download</button></td>
-            <td><button class="btn btn-warning" ng-click="downloadStr(file.name)">Download As String by Name</button></td>
+            <!--<td><button class="btn btn-warning" ng-click="download(file._id)">Download</button></td> 
+            <td><button class="btn btn-warning" ng-click="downloadStr(file.name)">Download As String by Name</button></td>-->
             <td><button class="btn btn-warning" ng-click="downloadStrById(file._id)">Download As String by id</button></td>
           </tr>
       	</tbody>
@@ -46,6 +46,7 @@
       <form enctype="multipart/form-data" >
           <input type="file" id="file" name="upload" multiple >
           <input type="submit" value="Upload" ng-click="upload()">
+          <input type="submit" value="Restore Functions" ng-click="restoreFunctions()">
       </form>
     </div>
   </body>

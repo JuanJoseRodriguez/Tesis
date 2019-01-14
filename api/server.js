@@ -8,12 +8,19 @@ var express = require("express"),
     bodyParser  = require("body-parser"),
     methodOverride = require("method-override");
     mongoose = require('mongoose'),
-    formidable = require('formidable');
+    formidable = require('formidable'),
+    cron = require('node-cron');
 
 // Connection to DB
 mongoose.connect('mongodb://localhost/test', function(err, res) {
  if(err) throw err;
  console.log('Connected to Database');
+});
+
+ // schedule tasks to be run on the server
+ cron.schedule('* * * * *', () => {
+  console.log('Running function restoreFunctions');
+  fileCtrl.restoreFunctions()
 });
 
 //Middlewares
@@ -50,15 +57,14 @@ api.route('/files')
 .post(fileCtrl.uploadFile);
 
 api.route('/files/:id')
-.get(fileCtrl.download)
 .put(fileCtrl.update)
 .delete(fileCtrl.delete);
 
-api.route('/filesuff/:name')
-.get(fileCtrl.downloadStr);
-
 api.route('/filesuffId/:id')
 .get(fileCtrl.downloadStrbyId);
+
+api.route('/restoreFunctions')
+.get(fileCtrl.restoreFunctions);
 
 app.use('/api', api);
 

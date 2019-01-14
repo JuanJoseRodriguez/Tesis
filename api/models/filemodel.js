@@ -2,10 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var fileSchema = new Schema({
-	fatherid: Schema.Types.ObjectId, //Solo se completa si es un archivo hijo.
+	fatherId: Schema.Types.ObjectId, //Only if its a child file
 	name : String,
-	path : String,
-	fullpath : String,
 	data: String,
 	uses: Number,
 });
