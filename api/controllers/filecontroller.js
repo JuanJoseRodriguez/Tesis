@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var modelo = mongoose.model('uffremoverModel');
+var criteria = require('./criteriaController.js');
 let fs = require('fs');
 const {
 	exec
@@ -47,7 +48,7 @@ exports.uploadFile = function(req, res) { //Init of uploadFile
 			//function saveUffs
 			console.log('[Info] Success executing command "uff optimize_file_browser"');
 			saveUffs(fatherFile);
-			res.status(200).jsonp('http://18.222.186.18:3000/api/filesuffId/' + fatherFile._id)
+			res.status(200).jsonp('http://18.222.192.49:3000/api/filesuffId/' + fatherFile._id)
 		});
 	});
 }
@@ -93,13 +94,15 @@ exports.update = function(req, res) {
 //GET - Restore all the funtions that pass a filter
 exports.restoreFunctions =  async function(req, res) {
 	try{
-		files = await findFunctionsToRestore()
+		console.log('antes de criteria!!!');
+		files = await criteria.findFunctionsToRestore();
+		console.log('despues de criteria!!!');
 		if (typeof files !== 'undefined' && files.length > 0){
 			restoreFuncs(files)
 			deleteUnusedFiles(files)
 		}
-		else return res('There are no functions to restore')				
-		res.status(200)	
+		else return res('There are no functions to restore')
+		res.status(200)
 	} catch(e) {
         return res('Unexpected error occurred');
     }
@@ -116,7 +119,7 @@ async function updateFile(id, data, fatherId, name, uses) {
 			if (name != null) file.name = name;
 			if (data != null) file.data = data;
 			if (uses != null) file.uses = uses;
-			file.save();			
+			file.save();
 			return file;
 		})
 		.catch((err) => {
@@ -132,12 +135,12 @@ async function saveUffs(fatherFile) {
 	let fileOptimizedName = (fatherFile.name).substring(0, (fatherFile.name).lastIndexOf('.')) + '-optimized-min.js';
 	let dataOptimized = fs.readFileSync('./uploads/' + fileOptimizedName).toString();
 	let dir = './uff';
-	
+
 	fileNames = fs.readdirSync(dir);
 	dataOptimized = fileNames.reduce(async (newDataOptimized, fileName) => {
 		let fileData = fs.readFileSync(`${dir}/${fileName}`);
 		let file = await saveFile(fatherFile._id, fileName, fileData)
-		return (await newDataOptimized).replace(`uff/${fileName}`, `http://18.222.186.18:3000/api/filesuffId/${file._id}`);
+		return (await newDataOptimized).replace(`uff/${fileName}`, `http://18.222.192.49:3000/api/filesuffId/${file._id}`);
 	  }, dataOptimized);
 
 	updateFile(fatherFile._id, await dataOptimized)
@@ -158,7 +161,7 @@ async function saveUffs(fatherFile) {
 
 //Create model and save it in mongo
 //return de mongo doc created
-async function saveFile(fatherId, fileName, data) {	
+async function saveFile(fatherId, fileName, data) {
 	//create file model
 	let file = new modelo({
 		fatherId: fatherId,
@@ -191,10 +194,10 @@ function restoreFuncs(files){
 		modelo.findById({
 			'_id' : childFile.fatherId
 		})
-		.then ((fatherFile) => {			
-			let newData = (fatherFile.data).replace('eval($dl("http://18.222.186.18:3000/api/filesuffId/' + childFile._id + '"))',childFile.data)
+		.then ((fatherFile) => {
+			let newData = (fatherFile.data).replace('eval($dl("http://18.222.192.49:3000/api/filesuffId/' + childFile._id + '"))',childFile.data)
 			fatherFile.data = newData
-			fatherFile.save()	
+			fatherFile.save()
 		})
 		.catch((err) => {
 			console.log('[Error] Function "restoreFuncs" failed',err)
@@ -206,7 +209,7 @@ function restoreFuncs(files){
 function deleteUnusedFiles(files){
 
 	let idsToDelete = files.map(file => file._id)
-		
+
 	modelo.deleteMany({ '_id' : { $in: idsToDelete}}, (err) => {
 		if (err) {
 			console.log('[Error] Function "deleteUnusedFiles" failed',err)
@@ -214,5 +217,5 @@ function deleteUnusedFiles(files){
 		else {
 			console.log('[Info] Success deleting unused files from Mongo ',idsToDelete)
 		}
-	})	
+	})
 }

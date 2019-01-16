@@ -1,7 +1,7 @@
 angular.module('app', [])
 	.controller('myController', function($scope, $http){
 
-		var ipAWS = 'http://18.222.186.18:3000'
+		var ipAWS = 'http://18.222.192.49:3000'
 		//get all files when page is refreshed
 		var refresh = function(){
 		$http.get(ipAWS + '/api/files')
@@ -95,7 +95,7 @@ angular.module('app', [])
 		$scope.restoreFunctions = function () {
 			$http.get(ipAWS + '/api/restoreFunctions')
 			.then(function(response) {
-				console.log("GET restore functions ok", response);				
+				console.log("GET restore functions ok", response);
 			}, function errorCallback(response) {
 				console.log("GET files error", response);
 				// called asynchronously if an error occurs

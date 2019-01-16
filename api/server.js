@@ -18,10 +18,10 @@ mongoose.connect('mongodb://localhost/test', function(err, res) {
 });
 
  // schedule tasks to be run on the server
- cron.schedule('* * * * *', () => {
+ /*cron.schedule('* * * * *', () => {
   console.log('Running function restoreFunctions');
   fileCtrl.restoreFunctions()
-});
+});*/
 
 //Middlewares
 // Configuramos la app para que pueda realizar métodos REST
