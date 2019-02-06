@@ -66,6 +66,9 @@ api.route('/filesuffId/:id')
 api.route('/restoreFunctions')
 .get(fileCtrl.restoreFunctions);
 
+api.route('/instrumentFile')
+.post(fileCtrl.instrumentFile);
+
 app.use('/api', api);
 
 // Start server

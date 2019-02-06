@@ -1,0 +1,2 @@
+app-instrumented.js:5 _PROFILING_INFO_start function null from app.js in 2_PROFILING_INFO_
+app-instrumented.js:11 _PROFILING_INFO_start function null from app.js in 6_PROFILING_INFO_

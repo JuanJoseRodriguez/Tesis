@@ -1,7 +1,7 @@
 angular.module('app', [])
 	.controller('myController', function($scope, $http){
 
-		var ipAWS = 'http://18.222.192.49:3000'
+		var ipAWS = 'http://13.59.133.10:3000'
 		//get all files when page is refreshed
 		var refresh = function(){
 		$http.get(ipAWS + '/api/files')
@@ -98,6 +98,34 @@ angular.module('app', [])
 				console.log("GET restore functions ok", response);
 			}, function errorCallback(response) {
 				console.log("GET files error", response);
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}
+
+		//Upload a file/files to server
+		$scope.instrumentFile = function () {
+			var f = document.getElementById('file').files[0];
+			//var f = document.getElementById('file');
+			$scope.fd=new FormData();
+			//var fd=new FormData();
+			$scope.fd.append('file',f);
+			$http.post(ipAWS + '/api/instrumentFile',$scope.fd,{
+							 transformRequest: angular.identity,
+							 headers: {'Content-Type': undefined}
+						})
+			.then(function(response) {
+				refresh();
+				console.log("POST instrument ok", response);
+				let filename = response.data[0].file.name;
+				let contentType = response.data[0].file.mimetype;
+				let a = document.createElement('a');
+				let blob = new Blob([response, {'type':contentType});
+        a.href = window.URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+			}, function errorCallback(response) {
+				console.log("post instrument not ok", response);
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});

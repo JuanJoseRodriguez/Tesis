@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var modelo = mongoose.model('uffremoverModel');
-var criteria = require('./criteriaController.js');
+// var criteria = require('./criteriaController.js');
 let fs = require('fs');
 const {
 	exec
@@ -107,6 +107,58 @@ exports.restoreFunctions =  async function(req, res) {
         return res('Unexpected error occurred');
     }
 }
+
+//POST Load file into the server for instrument it
+exports.instrumentFile = function(req, res) { //Init of InstrumentFile
+
+	let form = new formidable.IncomingForm()
+	//Check if file is a javaScript file
+	form.onPart = function(part, err) {
+		if (!part.filename || part.filename.match(/\.(js)$/i)) {
+			this.handlePart(part);
+		} else {
+			console.log(part.filename + ' is not allowed')
+		}
+	}
+	form.parse(req)
+
+	//Set path where the file is gonna be uploaded
+	form.on('fileBegin', (name, file) => {
+		file.path = './uploads/' + file.name
+		file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name
+	})
+
+	form.on('file', async (name, file) => {
+		//Instrument file with uffremover
+		exec('uff instrument_file ' + file.path, (err, stdout, stderr) => { //Init of command uff
+			if (err) {
+				// node couldn't execute the command
+				console.log('[Error] Failure executing command "uff instrument_file". ', err);
+				return;
+			}
+			//return instrumented file
+			console.log('[Info] Success executing command "uff instrument_file"');
+			// res.status(200).send( "Aca va el archivo instrumentado mmmm");
+			let pathInstrumented = file.path;
+			pathInstrumented = 	pathInstrumented.substring(0, pathInstrumented.length - 3) +
+													"-instrumented" +
+													pathInstrumented.substring(pathInstrumented.length - 3);
+
+			console.log('[Info] El path instrumented queda asi: ', pathInstrumented);
+			// res.download(pathInstrumented, "archivo");
+
+			let dataInstrumented = fs.readFileSync(pathInstrumented).toString();
+			res.status(200).send(dataInstrumented);
+			// file.name.substring(0, pathInstrumented.length - 3) +
+			// 																			"-instrumented" +
+			// 																			file.name.substring(pathInstrumented.length - 3)
+			console.log('[Info] Despues del download');
+
+
+		});
+	});
+}
+
 
 //*******************FUNCTIONS*************************
 //Update file on mongoDB

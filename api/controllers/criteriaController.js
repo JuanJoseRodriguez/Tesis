@@ -1,5 +1,5 @@
 var modelo = mongoose.model('uffremoverModel');
-var criteriaList = request(../criterias);
+// var criteriaList = request(../criterias);
 
 var normalizedPath = require("path").join(__dirname, "routes");
 
@@ -10,7 +10,7 @@ require("fs").readdirSync(normalizedPath).forEach(function(file) {
 module.exports = {
 	findFunctionsToRestore: async function() {
 		console.log('Entra a criteria!!!');
-		criteriaList = ['criteriaGt2.js'];
+		//criteriaList = ['criteriaGt2.js'];
 		dataOptimized = fileNames.reduce(async (newDataOptimized, fileName) => {
 			let fileData = fs.readFileSync(`${dir}/${fileName}`);
 			let file = await saveFile(fatherFile._id, fileName, fileData)
