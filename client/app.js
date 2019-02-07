@@ -117,10 +117,11 @@ angular.module('app', [])
 			.then(function(response) {
 				refresh();
 				console.log("POST instrument ok", response);
-				let filename = response.data[0].file.name;
-				let contentType = response.data[0].file.mimetype;
+				let filename = "instrumentedFile.js";
+				let contentType = "text/javascript";
 				let a = document.createElement('a');
-				let blob = new Blob([response, {'type':contentType});
+
+				let blob = new Blob([response.data, { 'type': contentType }]);
         a.href = window.URL.createObjectURL(blob);
         a.download = filename;
         a.click();
