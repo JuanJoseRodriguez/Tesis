@@ -74,10 +74,12 @@ angular.module('app', [])
 		//Upload a file/files to server
 		$scope.upload = function () {
 			var f = document.getElementById('file').files[0];
+			var fi = document.getElementById('filetxt').files[0];
 			//var f = document.getElementById('file');
 			$scope.fd=new FormData();
 			//var fd=new FormData();
 			$scope.fd.append('file',f);
+			$scope.fd.append('filetxt',fi);
 			$http.post(ipAWS + '/api/files',$scope.fd,{
                transformRequest: angular.identity,
                headers: {'Content-Type': undefined}

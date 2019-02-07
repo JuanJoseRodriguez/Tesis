@@ -20,23 +20,51 @@ exports.uploadFile = function(req, res) { //Init of uploadFile
 	var form = new formidable.IncomingForm()
 	//Check if file is a javaScript file
 	form.onPart = function(part, err) {
-		if (!part.filename || part.filename.match(/\.(js)$/i)) {
+		console.log('[Info] onPart: ', part)
+		if (!part.filename || part.filename.match(/\.(js)$/i) || part.filename.match(/\.(txt)$/i)) {
 			this.handlePart(part);
 		} else {
 			console.log(part.filename + ' is not allowed')
 		}
 	}
 
-	form.parse(req)
+	form.parse(req);
+	// 	, function(err, fields, files) {
+	// 	console.log('[Info] Filesssss: ', files);
+	// 	files.filetxt.path = './uploads/' + files.filetxt.name;
+	// 	files.filetxt.fullpath = '/home/ubuntu/tesis/uploads/' + files.filetxt.name;
+	// 	files.file.path = './uploads/' + files.file.name;
+	// 	files.file.fullpath = '/home/ubuntu/tesis/uploads/' + files.file.name;
+	//
+	// 	let uns = fs.readFileSync(files.file.path);
+	// 	let fatherFile = saveFile(null, files.file.name, uns);
+	// 	exec('uff optimize_file_browser ' + file.path + files.filetxt.path, (err, stdout, stderr) => { //Init of command uff
+	// 		if (err) {
+	// 			// node couldn't execute the command
+	// 			console.log('Failure executing command "uff optimize_file_browser". ', err);
+	// 			return;
+	// 		}
+	// 		//function saveUffs
+	// 		console.log('[Info] Success executing command "uff optimize_file_browser"');
+	// 		saveUffs(fatherFile);
+	// 		res.status(200).jsonp('http://18.222.192.49:3000/api/filesuffId/' + fatherFile._id)
+	// 	});
+	// });
 
 	//Set path where the file is gonna be uploaded
 	form.on('fileBegin', (name, file) => {
+		console.log('[Info] fileBegin: ', file);
 		file.path = './uploads/' + file.name
-		file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name
-	})
+		file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name;
+
+	});
 
 	form.on('file', async (name, file) => {
 		//Optimize file with uffremover
+		if (file.name.match(/\.(txt)$/i)) {
+			return;
+		}
+		console.log('[Info] fileTXT: ', file);
 		let uns = fs.readFileSync(file.path);
 		let fatherFile = await saveFile(null, file.name, uns);
 		exec('uff optimize_file_browser ' + file.path + ' profiling.txt ', (err, stdout, stderr) => { //Init of command uff
