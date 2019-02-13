@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var modelo = mongoose.model('uffremoverModel');
-// var criteria = require('./criteriaController.js');
+var criteria = require('./criteriaController.js');
 let fs = require('fs');
 const {
 	exec
@@ -15,7 +15,7 @@ exports.findAll = function(req, res) {
 }
 
 //POST Load file into the server
-exports.uploadFile = function(req, res) { //Init of uploadFile
+exports.uploadFile = async function(req, res) { //Init of uploadFile
 
 	var form = new formidable.IncomingForm()
 	//Check if file is a javaScript file
@@ -29,45 +29,36 @@ exports.uploadFile = function(req, res) { //Init of uploadFile
 	}
 
 	form.parse(req);
-	// 	, function(err, fields, files) {
-	// 	console.log('[Info] Filesssss: ', files);
-	// 	files.filetxt.path = './uploads/' + files.filetxt.name;
-	// 	files.filetxt.fullpath = '/home/ubuntu/tesis/uploads/' + files.filetxt.name;
-	// 	files.file.path = './uploads/' + files.file.name;
-	// 	files.file.fullpath = '/home/ubuntu/tesis/uploads/' + files.file.name;
-	//
-	// 	let uns = fs.readFileSync(files.file.path);
-	// 	let fatherFile = saveFile(null, files.file.name, uns);
-	// 	exec('uff optimize_file_browser ' + file.path + files.filetxt.path, (err, stdout, stderr) => { //Init of command uff
-	// 		if (err) {
-	// 			// node couldn't execute the command
-	// 			console.log('Failure executing command "uff optimize_file_browser". ', err);
-	// 			return;
-	// 		}
-	// 		//function saveUffs
-	// 		console.log('[Info] Success executing command "uff optimize_file_browser"');
-	// 		saveUffs(fatherFile);
-	// 		res.status(200).jsonp('http://18.222.192.49:3000/api/filesuffId/' + fatherFile._id)
-	// 	});
-	// });
 
 	//Set path where the file is gonna be uploaded
-	form.on('fileBegin', (name, file) => {
+	await form.on('fileBegin', (name, file) => {
 		console.log('[Info] fileBegin: ', file);
 		file.path = './uploads/' + file.name
 		file.fullpath = '/home/ubuntu/tesis/uploads/' + file.name;
 
 	});
 
-	form.on('file', async (name, file) => {
-		//Optimize file with uffremover
+	 let pathtxt = "";
+	 let pathjs = "";
+	 let filename = "";
+
+ await form.on('file', (name, file) => {
+	 //Save files and their paths to use uff optimize command
 		if (file.name.match(/\.(txt)$/i)) {
+			pathtxt = file.path;
 			return;
 		}
-		console.log('[Info] fileTXT: ', file);
-		let uns = fs.readFileSync(file.path);
-		let fatherFile = await saveFile(null, file.name, uns);
-		exec('uff optimize_file_browser ' + file.path + ' profiling.txt ', (err, stdout, stderr) => { //Init of command uff
+		pathjs = file.path;
+		filename = file.name;
+		return;
+	});
+
+	form.on('end', async () => {
+ 		//Optimize file with uffremover
+		console.log('[Info] paths: ', pathjs , pathtxt);
+		let uns = fs.readFileSync(pathjs);
+		let fatherFile = await saveFile(null, filename, uns);
+		exec('uff optimize_file_browser ' + pathjs + ' ' + pathtxt, (err, stdout, stderr) => { //Init of command uff
 			if (err) {
 				// node couldn't execute the command
 				console.log('Failure executing command "uff optimize_file_browser". ', err);
@@ -76,24 +67,27 @@ exports.uploadFile = function(req, res) { //Init of uploadFile
 			//function saveUffs
 			console.log('[Info] Success executing command "uff optimize_file_browser"');
 			saveUffs(fatherFile);
-			res.status(200).jsonp('http://18.222.192.49:3000/api/filesuffId/' + fatherFile._id)
+			res.status(200).jsonp('http://13.59.133.10:3000/api/filesuffId/' + fatherFile._id)
 		});
 	});
 }
 
 //DELETE - Delete with specified ID
 exports.delete = function(req, res) {
-	modelo.findById(req.params.id,(err, art) => {
-		modelo.remove({
-			"_id": req.params.id
-		},(err) => {
-			if (err) return res.status(500).send(err.message);
-			res.status(200).send(); //Esto creo que esta mal aca
-		})
-		//acá iria el error de que no lo encontro
-		//if (err) return res.status(500).send(err.message);
-		//sino aca creo que iria el status 200
-	});
+	modelo.remove({
+		"_id": req.params.id
+	},(err) => {
+		if (err) return res.status(500).send(err.message);
+		res.status(200).send();
+	})
+}
+
+//removeAllFiles - Remove all files from Mongo
+exports.removeAllFiles = function(req, res) {
+	modelo.remove((err) => {
+		if (err) return res.status(500).send(err.message);
+		res.status(200).send();
+	})
 }
 
 //GET - return a specified file as string by file id
@@ -166,23 +160,12 @@ exports.instrumentFile = function(req, res) { //Init of InstrumentFile
 			}
 			//return instrumented file
 			console.log('[Info] Success executing command "uff instrument_file"');
-			// res.status(200).send( "Aca va el archivo instrumentado mmmm");
 			let pathInstrumented = file.path;
 			pathInstrumented = 	pathInstrumented.substring(0, pathInstrumented.length - 3) +
 													"-instrumented" +
 													pathInstrumented.substring(pathInstrumented.length - 3);
-
-			console.log('[Info] El path instrumented queda asi: ', pathInstrumented);
-			// res.download(pathInstrumented, "archivo");
-
 			let dataInstrumented = fs.readFileSync(pathInstrumented).toString();
 			res.status(200).send(dataInstrumented);
-			// file.name.substring(0, pathInstrumented.length - 3) +
-			// 																			"-instrumented" +
-			// 																			file.name.substring(pathInstrumented.length - 3)
-			console.log('[Info] Despues del download');
-
-
 		});
 	});
 }
@@ -205,8 +188,6 @@ async function updateFile(id, data, fatherId, name, uses) {
 		.catch((err) => {
 			console.log('[Error] Function "updateFile" failed',err)
 		});
-		//Otra forma de hacer el update, ver como es con campos null
-		//modelo.update({ _id: id }, { $set: { size: 'large' }}, callback);
 }
 
 //Read files in uff directory, saving each in mongoDB and replace its name for its id in the optimized file
@@ -220,7 +201,7 @@ async function saveUffs(fatherFile) {
 	dataOptimized = fileNames.reduce(async (newDataOptimized, fileName) => {
 		let fileData = fs.readFileSync(`${dir}/${fileName}`);
 		let file = await saveFile(fatherFile._id, fileName, fileData)
-		return (await newDataOptimized).replace(`uff/${fileName}`, `http://18.222.192.49:3000/api/filesuffId/${file._id}`);
+		return (await newDataOptimized).replace(`uff/${fileName}`, `http://13.59.133.10:3000/api/filesuffId/${file._id}`);
 	  }, dataOptimized);
 
 	updateFile(fatherFile._id, await dataOptimized)
@@ -275,9 +256,10 @@ function restoreFuncs(files){
 			'_id' : childFile.fatherId
 		})
 		.then ((fatherFile) => {
-			let newData = (fatherFile.data).replace('eval($dl("http://18.222.192.49:3000/api/filesuffId/' + childFile._id + '"))',childFile.data)
+			let newData = (fatherFile.data).replace('eval($dl("http://13.59.133.10:3000/api/filesuffId/' + childFile._id + '"))',childFile.data)
 			fatherFile.data = newData
 			fatherFile.save()
+			console.log('[Info] Success restoring file ',childFile._id)
 		})
 		.catch((err) => {
 			console.log('[Error] Function "restoreFuncs" failed',err)

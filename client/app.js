@@ -30,31 +30,18 @@ angular.module('app', [])
 			});
 		}
 
-		// //Download file from server
-		// $scope.download = function(id){
-		// 	$http.get(ipAWS + '/api/files/' + id)
-		// 	.then(function(response) {
-		// 	console.log(response)
-
-		// }, function errorCallback(response) {
-		// 		console.log("Download error", response);
-		// 		// called asynchronously if an error occurs
-		// 		// or server returns response with an error status.
-		// 	});
-		// }
-
-		// //Download file from server as a string by file name
-		// $scope.downloadStr = function(name){
-		// 	$http.get(ipAWS + '/api/filesuff/' + name)
-		// 	.then(function(response) {
-		// 	console.log(response.data)
-
-		// }, function errorCallback(response) {
-		// 		console.log("Download error", response);
-		// 		// called asynchronously if an error occurs
-		// 		// or server returns response with an error status.
-		// 	});
-		// }
+		//Delete file from DB
+		$scope.removeAllFiles = function(){
+			$http.delete(ipAWS + '/api/files/')
+			.then(function(response) {
+				refresh();
+				console.log("Delete all ok", response);
+			}, function errorCallback(response) {
+				console.log("Delete all not ok", response);
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}
 
 		//Download file from server as a string by file id
 		$scope.downloadStrById = function(id){
@@ -97,6 +84,7 @@ angular.module('app', [])
 		$scope.restoreFunctions = function () {
 			$http.get(ipAWS + '/api/restoreFunctions')
 			.then(function(response) {
+				refresh();
 				console.log("GET restore functions ok", response);
 			}, function errorCallback(response) {
 				console.log("GET files error", response);
@@ -119,7 +107,7 @@ angular.module('app', [])
 			.then(function(response) {
 				refresh();
 				console.log("POST instrument ok", response);
-				let filename = "instrumentedFile.js";
+				let filename = "instrumentedfile.js";
 				let contentType = "text/javascript";
 				let a = document.createElement('a');
 

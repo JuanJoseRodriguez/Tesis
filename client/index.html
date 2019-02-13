@@ -15,6 +15,18 @@
   </head>
   <body ng-controller="myController">
     <div>
+      <form enctype="multipart/form-data" >
+          <br>Seleccionar Archivo JS</br>
+          <input type="file" id="file" name="upload" >
+          <br>Seleccionar Archivo TXT</br>
+          <input type="file" id="filetxt" name="uploadtxt">
+          <input type="submit" value="Upload" ng-click="upload()">
+          <input type="submit" value="Restore Functions" ng-click="restoreFunctions()">
+          <input type="submit" value="Instrument" ng-click="instrumentFile()">
+          <input type="submit" value="Remove All" ng-click="removeAllFiles()">
+      </form>
+    </div>
+    <div>
       <h1>Files uploaded</h1>
 
       <table class="table">
@@ -41,17 +53,6 @@
           </tr>
       	</tbody>
       </table>
-    </div>
-    <div>
-      <form enctype="multipart/form-data" >
-          <br>Seleccionar Archivo JS</br>
-          <input type="file" id="file" name="upload" >
-          <br>Seleccionar Archivo TXT</br>
-          <input type="file" id="filetxt" name="uploadtxt">
-          <input type="submit" value="Upload" ng-click="upload()">
-          <input type="submit" value="Restore Functions" ng-click="restoreFunctions()">
-          <input type="submit" value="Instrument" ng-click="instrumentFile()">
-      </form>
     </div>
   </body>
 </html>

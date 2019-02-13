@@ -54,7 +54,8 @@ var api = express.Router();
 
 api.route('/files')
 .get(fileCtrl.findAll)
-.post(fileCtrl.uploadFile);
+.post(fileCtrl.uploadFile)
+.delete(fileCtrl.removeAllFiles);
 
 api.route('/files/:id')
 .put(fileCtrl.update)
