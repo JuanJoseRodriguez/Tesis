@@ -5,6 +5,7 @@ let fs = require('fs');
 const {
 	exec
 } = require('child_process');
+var ipAWS = 'http://13.59.133.10:3000'
 
 //GET - Return all files in the DB
 exports.findAll = function(req, res) {
@@ -67,7 +68,7 @@ exports.uploadFile = async function(req, res) { //Init of uploadFile
 			//function saveUffs
 			console.log('[Info] Success executing command "uff optimize_file_browser"');
 			saveUffs(fatherFile);
-			res.status(200).jsonp('http://13.59.133.10:3000/api/filesuffId/' + fatherFile._id)
+			res.status(200).jsonp(ipAWS + '/api/filesuffId/' + fatherFile._id)
 		});
 	});
 }
@@ -201,7 +202,7 @@ async function saveUffs(fatherFile) {
 	dataOptimized = fileNames.reduce(async (newDataOptimized, fileName) => {
 		let fileData = fs.readFileSync(`${dir}/${fileName}`);
 		let file = await saveFile(fatherFile._id, fileName, fileData)
-		return (await newDataOptimized).replace(`uff/${fileName}`, `http://13.59.133.10:3000/api/filesuffId/${file._id}`);
+		return (await newDataOptimized).replace(`uff/${fileName}`, ipAWS + `/api/filesuffId/${file._id}`);
 	  }, dataOptimized);
 
 	updateFile(fatherFile._id, await dataOptimized)
@@ -256,7 +257,7 @@ function restoreFuncs(files){
 			'_id' : childFile.fatherId
 		})
 		.then ((fatherFile) => {
-			let newData = (fatherFile.data).replace('eval($dl("http://13.59.133.10:3000/api/filesuffId/' + childFile._id + '"))',childFile.data)
+			let newData = (fatherFile.data).replace('eval($dl("'+ ipAWS + '/api/filesuffId/' + childFile._id + '"))',childFile.data)
 			fatherFile.data = newData
 			fatherFile.save()
 			console.log('[Info] Success restoring file ',childFile._id)
