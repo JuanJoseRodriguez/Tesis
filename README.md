@@ -13,7 +13,7 @@ UFFRemover Server is developed using Node.js. The following steps are needed for
 #### 2. Download the project in the from github
 
     git clone https://github.com/JuanJoseRodriguez/Tesis.git
-    cd Tesis
+    cd Tesis/api
 
 #### 3. Install the project dependencies
 
