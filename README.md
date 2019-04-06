@@ -1,11 +1,11 @@
 ![UFF Image](http://fs5.directupload.net/images/170302/d5zleuc5.png)
-# UFFRemover Server
+# UFFServer
 
-UFFRemover Server is a implementation of the slimming JavaScript tool UFFRemover for identifying and removing unused foreign functions (UFF).
+UFFServer is a implementation of the slimming JavaScript tool UFFRemover for identifying and removing unused foreign functions (UFF).
 
 ## Installation
 
-UFFRemover Server is developed using Node.js. The following steps are needed for running the tool:
+UFFServer is developed using MEAN Stack. The following steps are needed for running the tool:
 
 #### 1. Install MEAN Stack in a server.
     MEAN Stack information can be found here (http://mean.io/)
